@@ -8,7 +8,7 @@ package back;
  *
  * @author PC
  */
-public class Blanca extends Fichas{
+public class Blanca{
     
     
     
