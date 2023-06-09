@@ -11,7 +11,8 @@ package back;
 public class Blanca{
     
     
-    
-    
+    private int prueba;
+
+    //calando el pr
     
 }
