@@ -9,23 +9,29 @@ package back;
  * @author PC
  */
 public class Tablero {
+
+    static int TAMANO;  
     private int filas;                  //numero de filas que tiene nuestro tablero
     private int columnas;               //numero de columnas que tiene nuestro tablero
     private int estado;                 //estado de nuestro tablero
     private int cantidadBlancas;        //Cantidad de fichas blancas que tiene nuestro tablero
     private int cantidadNegras;         //Cantidad de fichas negras que tiene nuestro tablero
+    private Casilla[][] casillas;
 
     
     
     public Tablero(int filas, int columnas, int estado, int cantidadBlancas, int cantidadNegras) {
         this.filas = filas;
+        
         this.columnas = columnas;
         this.estado = estado;
         this.cantidadBlancas = cantidadBlancas;
         this.cantidadNegras = cantidadNegras;
     }
 
-    
+    public Casilla obtenerCasilla(int fila, int columna) {
+        return casillas[fila][columna];
+    }
     
     public int getFilas() {
         return filas;

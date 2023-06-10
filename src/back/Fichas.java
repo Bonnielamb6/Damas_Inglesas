@@ -4,129 +4,124 @@
  */
 package back;
 
+import java.awt.Color;
+
 /**
  *
  * @author PC
  */
 public class Fichas {
-    private int fila;                   //Fila en la que se encuentra nuestra ficha
-    private int columna;                //Columna en la que se encuentra nuestra ficha
-    private int estado;                 //Estado actual de nuestra ficha
-    private int boba;                   //Va a eliminarse la ficha por boba o no? (si puede comer pero no come entonces se elimina por boba)
-    private int comerDerecha;           //Puede comer hacia su derecha al frente?
-    private int comerIzquierda;         //Puede comer hacia su izquierda al frente?
-    private int comerDerechaAbajo;      //Puede comer hacia abajo a la derecha?(Solo se puede si antes ya habia comido una ficha o si comio una hacia al frente)
-    private int comerIzquierdaAbajo;    //Puede comer hacia abajo a la izquierda?(Solo se puede si antes ya habia comido una ficha o si comio una hacia al frente)
-    private int moverDerecha;           //Se puede mover hacia la derecha? (Hay un espacio vacio hacia donde moverse?)
-    private int moverIzquierda;         //Se puede mover hacia la izquierda?(Hay un espacio vacio hacia donde moverse?)
-    private int color;                  //Color de la ficha (0 -> Negra, 1 -> Blanca)
-    
-    public Fichas(int fila, int columna, int estado, int boba, int comerDerecha, int comerIzquierda, int comerDerechaAbajo, int comerIzquierdaAbajo,int moverDerecha, int moverIzquierda,int color) {
+    private int fila;
+    private int columna;
+    private Color color;
+    private boolean reina;
+    private Tablero tablero;
+
+    public Fichas(int fila, int columna, Color color, Tablero tablero) {
         this.fila = fila;
         this.columna = columna;
-        this.estado = estado;
-        this.boba = boba;
-        this.comerDerecha = comerDerecha;
-        this.comerIzquierda = comerIzquierda;
-        this.comerDerechaAbajo = comerDerechaAbajo;
-        this.comerIzquierdaAbajo = comerIzquierdaAbajo;
-        this.moverDerecha = moverDerecha;
-        this.moverIzquierda = moverIzquierda;
         this.color = color;
+        this.reina = false;
+        this.tablero = tablero;
     }
-    
-    
 
-    
-    
     public int getFila() {
         return fila;
-    }
-
-    public void setFila(int fila) {
-        this.fila = fila;
     }
 
     public int getColumna() {
         return columna;
     }
 
-    public void setColumna(int columna) {
-        this.columna = columna;
-    }
-
-    public int getEstado() {
-        return estado;
-    }
-
-    public void setEstado(int estado) {
-        this.estado = estado;
-    }
-
-    public int getBoba() {
-        return boba;
-    }
-
-    public void setBoba(int boba) {
-        this.boba = boba;
-    }
-
-    public int getComerDerecha() {
-        return comerDerecha;
-    }
-
-    public void setComerDerecha(int comerDerecha) {
-        this.comerDerecha = comerDerecha;
-    }
-
-    public int getComerIzquierda() {
-        return comerIzquierda;
-    }
-
-    public void setComerIzquierda(int comerIzquierda) {
-        this.comerIzquierda = comerIzquierda;
-    }
-
-    public int getComerDerechaAbajo() {
-        return comerDerechaAbajo;
-    }
-
-    public void setComerDerechaAbajo(int comerDerechaAbajo) {
-        this.comerDerechaAbajo = comerDerechaAbajo;
-    }
-
-    public int getComerIzquierdaAbajo() {
-        return comerIzquierdaAbajo;
-    }
-
-    public void setComerIzquierdaAbajo(int comerIzquierdaAbajo) {
-        this.comerIzquierdaAbajo = comerIzquierdaAbajo;
-    }
-
-    public int getMoverDerecha() {
-        return moverDerecha;
-    }
-
-    public void setMoverDerecha(int moverDerecha) {
-        this.moverDerecha = moverDerecha;
-    }
-
-    public int getMoverIzquierda() {
-        return moverIzquierda;
-    }
-
-    public void setMoverIzquierda(int moverIzquierda) {
-        this.moverIzquierda = moverIzquierda;
-    }
-
-    public int getColor() {
+    public Color getColor() {
         return color;
     }
 
-    public void setColor(int color) {
-        this.color = color;
+    public boolean esReina() {
+        return reina;
     }
-    
-    
-    
+
+    public void convertirEnReina() {
+        reina = true;
+    }
+
+    public boolean puedeMover(Direccion direccion) {
+        int incrementoFila = (color == Color.WHITE) ? 1 : -1;
+
+        if (reina) {
+            return puedeMoverEnDireccion(fila + incrementoFila, columna - 1, direccion)
+                    || puedeMoverEnDireccion(fila + incrementoFila, columna + 1, direccion)
+                    || puedeMoverEnDireccion(fila - incrementoFila, columna - 1, direccion)
+                    || puedeMoverEnDireccion(fila - incrementoFila, columna + 1, direccion);
+        } else {
+            return puedeMoverEnDireccion(fila + incrementoFila, columna - 1, direccion)
+                    || puedeMoverEnDireccion(fila + incrementoFila, columna + 1, direccion);
+        }
+    }
+
+    private boolean puedeMoverEnDireccion(int nuevaFila, int nuevaColumna, Direccion direccion) {
+        if (nuevaFila >= 0 && nuevaFila < Tablero.TAMANO && nuevaColumna >= 0 && nuevaColumna < Tablero.TAMANO) {
+            Casilla casillaDestino = tablero.obtenerCasilla(nuevaFila, nuevaColumna);
+
+            if (casillaDestino.estaVacia()) {
+                return true;
+            } else if (casillaDestino.getFicha().getColor() != color) {
+                // La casilla destino está ocupada por una ficha del color opuesto, verificar si se puede saltar
+                int saltoFila = nuevaFila + direccion.incrementoFila;
+                int saltoColumna = nuevaColumna + direccion.incrementoColumna;
+
+                if (saltoFila >= 0 && saltoFila < Tablero.TAMANO && saltoColumna >= 0 && saltoColumna < Tablero.TAMANO) {
+                    Casilla casillaSalto = tablero.obtenerCasilla(saltoFila, saltoColumna);
+
+                    if (casillaSalto.estaVacia()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean puedeComer(Direccion direccion) {
+        int incrementoFila = (color == Color.WHITE) ? 1 : -1;
+        int incrementoColumna = (direccion == Direccion.DIAGONAL_IZQUIERDA_ARRIBA || direccion == Direccion.DIAGONAL_IZQUIERDA_ABAJO) ? -1 : 1;
+
+        if (reina) {
+            return puedeComerEnDireccion(fila + incrementoFila, columna - 1, incrementoFila, incrementoColumna)
+                    || puedeComerEnDireccion(fila + incrementoFila, columna + 1, incrementoFila, incrementoColumna)
+                    || puedeComerEnDireccion(fila - incrementoFila, columna - 1, -incrementoFila, incrementoColumna)
+                    || puedeComerEnDireccion(fila - incrementoFila, columna + 1, -incrementoFila, incrementoColumna);
+        } else {
+            return puedeComerEnDireccion(fila + incrementoFila, columna - 1, incrementoFila, incrementoColumna)
+                    || puedeComerEnDireccion(fila + incrementoFila, columna + 1, incrementoFila, incrementoColumna);
+        }
+    }
+
+    private boolean puedeComerEnDireccion(int nuevaFila, int nuevaColumna, int incrementoFila, int incrementoColumna) {
+        if (nuevaFila >= 0 && nuevaFila < Tablero.TAMANO && nuevaColumna >= 0 && nuevaColumna < Tablero.TAMANO) {
+            Casilla casillaIntermedia = tablero.obtenerCasilla((fila + nuevaFila) / 2, (columna + nuevaColumna) / 2);
+            Casilla casillaDestino = tablero.obtenerCasilla(nuevaFila, nuevaColumna);
+
+            if (casillaDestino.estaVacia() && !casillaIntermedia.estaVacia()
+                    && casillaIntermedia.getFicha().getColor() != color) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static class Direccion {
+        private int incrementoFila;
+        private int incrementoColumna;
+
+        private Direccion(int incrementoFila, int incrementoColumna) {
+            this.incrementoFila = incrementoFila;
+            this.incrementoColumna = incrementoColumna;
+        }
+
+        private static final Direccion DIAGONAL_IZQUIERDA_ARRIBA = new Direccion(-1, -1);
+        private static final Direccion DIAGONAL_DERECHA_ARRIBA = new Direccion(-1, 1);
+        private static final Direccion DIAGONAL_IZQUIERDA_ABAJO = new Direccion(1, -1);
+        private static final Direccion DIAGONAL_DERECHA_ABAJO = new Direccion(1, 1);
+    }
 }
