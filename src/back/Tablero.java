@@ -9,71 +9,44 @@ package back;
  * @author PC
  */
 public class Tablero {
-
-    static int TAMANO;  
-    private int filas;                  //numero de filas que tiene nuestro tablero
-    private int columnas;               //numero de columnas que tiene nuestro tablero
-    private int estado;                 //estado de nuestro tablero
-    private int cantidadBlancas;        //Cantidad de fichas blancas que tiene nuestro tablero
-    private int cantidadNegras;         //Cantidad de fichas negras que tiene nuestro tablero
+    public static final int TAMANO = 8;
     private Casilla[][] casillas;
 
-    
-    
-    public Tablero(int filas, int columnas, int estado, int cantidadBlancas, int cantidadNegras) {
-        this.filas = filas;
-        
-        this.columnas = columnas;
-        this.estado = estado;
-        this.cantidadBlancas = cantidadBlancas;
-        this.cantidadNegras = cantidadNegras;
+    public Tablero() {
+        casillas = new Casilla[TAMANO][TAMANO];
+        inicializarCasillas();
+    }
+
+    private void inicializarCasillas() {
+        for (int fila = 0; fila < TAMANO; fila++) {
+            for (int columna = 0; columna < TAMANO; columna++) {
+                if ((fila + columna) % 2 == 0) {
+                    casillas[fila][columna] = new Casilla(fila, columna, null);
+                } else {
+                    Color color = (fila < 3) ? Color.WHITE : Color.BLACK;
+                    casillas[fila][columna] = new Casilla(fila, columna, new Ficha(fila, columna, color, this));
+                }
+            }
+        }
     }
 
     public Casilla obtenerCasilla(int fila, int columna) {
         return casillas[fila][columna];
     }
-    
-    public int getFilas() {
-        return filas;
-    }
 
-    public void setFilas(int filas) {
-        this.filas = filas;
-    }
+    public void moverFicha(Ficha ficha, int nuevaFila, int nuevaColumna) {
+        int filaActual = ficha.getFila();
+        int columnaActual = ficha.getColumna();
+        Casilla casillaOrigen = casillas[filaActual][columnaActual];
+        Casilla casillaDestino = casillas[nuevaFila][nuevaColumna];
 
-    public int getColumnas() {
-        return columnas;
-    }
+        casillaOrigen.removerFicha();
+        casillaDestino.setFicha(ficha);
+        ficha.setPosicion(nuevaFila, nuevaColumna);
 
-    public void setColumnas(int columnas) {
-        this.columnas = columnas;
+        // Comprobar si la ficha se convierte en reina
+        if (!ficha.esReina() && (nuevaFila == 0 || nuevaFila == TAMANO - 1)) {
+            ficha.convertirEnReina();
+        }
     }
-
-    public int getEstado() {
-        return estado;
-    }
-
-    public void setEstado(int estado) {
-        this.estado = estado;
-    }
-
-    public int getCantidadBlancas() {
-        return cantidadBlancas;
-    }
-
-    public void setCantidadBlancas(int cantidadBlancas) {
-        this.cantidadBlancas = cantidadBlancas;
-    }
-
-    public int getCantidadNegras() {
-        return cantidadNegras;
-    }
-
-    public void setCantidadNegras(int cantidadNegras) {
-        this.cantidadNegras = cantidadNegras;
-    }
-    
-    
-    
 }
-        

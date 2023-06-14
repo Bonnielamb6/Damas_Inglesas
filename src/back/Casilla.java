@@ -4,15 +4,23 @@
  */
 package back;
 
+import java.awt.Color;
+
 /**
  *
  * @author User
  */
 public class Casilla {
+    private Color color;
     private Fichas ficha;
 
-    public Casilla() {
+    public Casilla(Color color) {
+        this.color = color;
         this.ficha = null;
+    }
+
+    public Color getColor() {
+        return color;
     }
 
     public boolean estaVacia() {
@@ -23,8 +31,12 @@ public class Casilla {
         return ficha;
     }
 
-    public void setFicha(Fichas ficha) {
+    public void colocarFicha(Fichas ficha) {
         this.ficha = ficha;
+    }
+
+    public void quitarFicha() {
+        this.ficha = null;
     }
 }
 
