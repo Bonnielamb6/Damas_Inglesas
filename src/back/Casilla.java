@@ -11,33 +11,21 @@ import java.awt.Color;
  * @author User
  */
 public class Casilla {
-    private Color color;
-    private Fichas ficha;
+    private Ficha ficha;
 
-    public Casilla(Color color) {
-        this.color = color;
+    public Casilla() {
         this.ficha = null;
-    }
-
-    public Color getColor() {
-        return color;
     }
 
     public boolean estaVacia() {
         return ficha == null;
     }
 
-    public Fichas getFicha() {
+    public Ficha getFicha() {
         return ficha;
     }
 
-    public void colocarFicha(Fichas ficha) {
+    public void setFicha(Ficha ficha) {
         this.ficha = ficha;
     }
-
-    public void quitarFicha() {
-        this.ficha = null;
-    }
 }
-
-

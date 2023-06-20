@@ -10,14 +10,17 @@ import java.awt.Color;
  *
  * @author PC
  */
-public class Fichas {
+public class Ficha {
     private int fila;
     private int columna;
     private Color color;
     private boolean reina;
     private Tablero tablero;
+    private static final Color COLOR_FICHA_BLANCA = Color.GREEN;
+    private static final Color COLOR_FICHA_NEGRA = Color.RED;
+    private static final int TAMANO_TABLERO = 8;
 
-    public Fichas(int fila, int columna, Color color, Tablero tablero) {
+    public Ficha(int fila, int columna, Color color, Tablero tablero) {
         this.fila = fila;
         this.columna = columna;
         this.color = color;
@@ -29,24 +32,44 @@ public class Fichas {
         return fila;
     }
 
+    public void setFila(int fila) {
+        this.fila = fila;
+    }
+
     public int getColumna() {
         return columna;
+    }
+
+    public void setColumna(int columna) {
+        this.columna = columna;
     }
 
     public Color getColor() {
         return color;
     }
 
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
     public boolean esReina() {
         return reina;
     }
 
-    public void convertirEnReina() {
-        reina = true;
+    public void setReina(boolean reina) {
+        this.reina = reina;
+    }
+
+    public Tablero getTablero() {
+        return tablero;
+    }
+
+    public void setTablero(Tablero tablero) {
+        this.tablero = tablero;
     }
 
     public boolean puedeMover(Direccion direccion) {
-        int incrementoFila = (color == Color.WHITE) ? 1 : -1;
+        int incrementoFila = (color == Color.GREEN) ? 1 : -1;
 
         if (reina) {
             return puedeMoverEnDireccion(fila + incrementoFila, columna - 1, direccion)
@@ -58,9 +81,31 @@ public class Fichas {
                     || puedeMoverEnDireccion(fila + incrementoFila, columna + 1, direccion);
         }
     }
+    
+    public boolean esMovimientoValido(int filaDestino, int columnaDestino) {
+        int direccion = (color == COLOR_FICHA_BLANCA) ? -1 : 1;
+
+        int difFila = filaDestino - fila;
+        int difColumna = columnaDestino - columna;
+
+        // Verificar si el movimiento es diagonal hacia adelante
+        if (Math.abs(difFila) == 1 && Math.abs(difColumna) == 1) {
+            // Verificar dirección y casilla de destino vacía
+            if (difFila == direccion && casillaDestinoVacia(filaDestino, columnaDestino)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean casillaDestinoVacia(int filaDestino, int columnaDestino) {
+        Casilla casilla = tablero.obtenerCasilla(filaDestino, columnaDestino);
+        return casilla.estaVacia();
+    }
 
     private boolean puedeMoverEnDireccion(int nuevaFila, int nuevaColumna, Direccion direccion) {
-        if (nuevaFila >= 0 && nuevaFila < Tablero.TAMANO && nuevaColumna >= 0 && nuevaColumna < Tablero.TAMANO) {
+        if (nuevaFila >= 0 && nuevaFila < TAMANO_TABLERO && nuevaColumna >= 0 && nuevaColumna < TAMANO_TABLERO) {
             Casilla casillaDestino = tablero.obtenerCasilla(nuevaFila, nuevaColumna);
 
             if (casillaDestino.estaVacia()) {
@@ -70,7 +115,7 @@ public class Fichas {
                 int saltoFila = nuevaFila + direccion.incrementoFila;
                 int saltoColumna = nuevaColumna + direccion.incrementoColumna;
 
-                if (saltoFila >= 0 && saltoFila < Tablero.TAMANO && saltoColumna >= 0 && saltoColumna < Tablero.TAMANO) {
+                if (saltoFila >= 0 && saltoFila < TAMANO_TABLERO && saltoColumna >= 0 && saltoColumna < TAMANO_TABLERO) {
                     Casilla casillaSalto = tablero.obtenerCasilla(saltoFila, saltoColumna);
 
                     if (casillaSalto.estaVacia()) {
@@ -83,7 +128,7 @@ public class Fichas {
     }
 
     public boolean puedeComer(Direccion direccion) {
-        int incrementoFila = (color == Color.WHITE) ? 1 : -1;
+        int incrementoFila = (color == Color.GREEN) ? 1 : -1;
         int incrementoColumna = (direccion == Direccion.DIAGONAL_IZQUIERDA_ARRIBA || direccion == Direccion.DIAGONAL_IZQUIERDA_ABAJO) ? -1 : 1;
 
         if (reina) {
@@ -98,7 +143,7 @@ public class Fichas {
     }
 
     private boolean puedeComerEnDireccion(int nuevaFila, int nuevaColumna, int incrementoFila, int incrementoColumna) {
-        if (nuevaFila >= 0 && nuevaFila < Tablero.TAMANO && nuevaColumna >= 0 && nuevaColumna < Tablero.TAMANO) {
+        if (nuevaFila >= 0 && nuevaFila < TAMANO_TABLERO && nuevaColumna >= 0 && nuevaColumna < TAMANO_TABLERO) {
             Casilla casillaIntermedia = tablero.obtenerCasilla((fila + nuevaFila) / 2, (columna + nuevaColumna) / 2);
             Casilla casillaDestino = tablero.obtenerCasilla(nuevaFila, nuevaColumna);
 
@@ -110,7 +155,7 @@ public class Fichas {
         return false;
     }
 
-    private static class Direccion {
+    public static class Direccion {
         private int incrementoFila;
         private int incrementoColumna;
 
@@ -119,9 +164,9 @@ public class Fichas {
             this.incrementoColumna = incrementoColumna;
         }
 
-        private static final Direccion DIAGONAL_IZQUIERDA_ARRIBA = new Direccion(-1, -1);
-        private static final Direccion DIAGONAL_DERECHA_ARRIBA = new Direccion(-1, 1);
-        private static final Direccion DIAGONAL_IZQUIERDA_ABAJO = new Direccion(1, -1);
-        private static final Direccion DIAGONAL_DERECHA_ABAJO = new Direccion(1, 1);
+        public static final Direccion DIAGONAL_IZQUIERDA_ARRIBA = new Direccion(-1, -1);
+        public static final Direccion DIAGONAL_DERECHA_ARRIBA = new Direccion(-1, 1);
+        public static final Direccion DIAGONAL_IZQUIERDA_ABAJO = new Direccion(1, -1);
+        public static final Direccion DIAGONAL_DERECHA_ABAJO = new Direccion(1, 1);
     }
 }

@@ -4,6 +4,8 @@
  */
 package back;
 
+import java.awt.Color;
+
 /**
  *
  * @author User
@@ -118,7 +120,7 @@ public class MinMax {
 
         for (int fila = 0; fila < 8; fila++) {
             for (int columna = 0; columna < 8; columna++) {
-                Pieza pieza = tablero.getPieza(fila, columna);
+                Ficha pieza = tablero.getPieza(fila, columna);
                 if (pieza != null) {
                     int valorPieza = 1; // Valor por defecto para una pieza normal
 
